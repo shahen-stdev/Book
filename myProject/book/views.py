@@ -3,12 +3,13 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 
-from book.models import User, Book, Author
+from book.models import User, Book, Author, BookAuthor
 from book.serializers import (UserSerializer,
                               BookSerializer,
                               RegistrationSerializer,
                               LoginSerializer,
-                              AuthorSerializer)
+                              AuthorSerializer,
+                              BookAuthorSerializer)
 
 
 class LogoutView(views.APIView):
@@ -76,6 +77,14 @@ class AuthorModelViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
 
     serializer_class = AuthorSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+
+class BookAuthorViewSet(viewsets.ModelViewSet):
+    queryset = BookAuthor.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
+
+    serializer_class = BookAuthorSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
 
 

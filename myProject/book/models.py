@@ -52,11 +52,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'user'
         verbose_name_plural = 'users'
 
-    #
-    # @property
-    # def token(self):
-    #     return self._generate_jwt_token()
-
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
@@ -67,13 +62,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    # def _generate_jwt_token(self):
-    #     payload = jwt_payload_handler(self)
-    #
-    #     token = jwt_encode_handler(payload)
-    #
-    #     return token
-
     def __str__(self):
         return self.first_name
 
@@ -83,9 +71,12 @@ class Book(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey('book.User', related_name='books', on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
+        return self.title
+
+    def __unicode__(self):
         return self.title
 
 
@@ -95,7 +86,22 @@ class Author(models.Model):
     date_of_birth = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    books = models.ManyToManyField(Book, related_name='authors')
+    # books = models.ManyToManyField(Book, through="BookAuthor")
 
     def __str__(self):
         return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class BookAuthor(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "{0} {1}".format(self.book.title, self.author.name)
+
+    def __unicode__(self):
+        return "{0} {1}".format(self.book.title, self.author.name)
+

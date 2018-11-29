@@ -22,6 +22,7 @@ from rest_framework_swagger.views import get_swagger_view
 from book.views import (LoginApiView,
                         AuthorModelViewSet,
                         BookModelViewSet,
+                        BookAuthorViewSet,
                         UserModelViewSet,
                         LogoutView,
                         RegistrationAPIView)
@@ -30,6 +31,7 @@ router = DefaultRouter()
 router.register(r'authors', AuthorModelViewSet, basename='author')
 router.register(r'books', BookModelViewSet, basename='book')
 router.register(r'users', UserModelViewSet, basename='user')
+router.register(r'book-authors', BookAuthorViewSet, basename='book-authors')
 schema_view = get_swagger_view(title='First API')
 
 urlpatterns = [

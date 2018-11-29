@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate
+from django.db import transaction
 from rest_framework import serializers
 
-from book.models import Book, Author, User
+from book.models import Book, Author, User, BookAuthor
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,14 +32,23 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'bio', 'date_of_birth')
 
 
+class BookAuthorSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(queryset=Author.objects.all())
+    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
+    id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = BookAuthor
+        fields = ('id', 'author', 'book')
+
+
 class BookSerializer(serializers.ModelSerializer):
-    # authors = serializers.PrimaryKeyRelatedField(many=True, queryset=Author.objects.all())
-    authors = AuthorSerializer(many=True)
     owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Book
-        fields = ('id', 'title', 'description', 'owner', 'authors')
+        fields = ('id', 'title', 'description', 'owner')
+        depth = 1
 
 
 class LoginSerializer(serializers.ModelSerializer):
