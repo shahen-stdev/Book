@@ -42,8 +42,15 @@ class BookAuthorSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'book')
 
 
+class CurrentUserField(serializers.PrimaryKeyRelatedField):
+    def get_queryset(self):
+        user = self.context['request'].user
+        queryset = User.objects.filter(id=user.id)
+        return queryset
+
+
 class BookSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    owner = CurrentUserField()
 
     class Meta:
         model = Book
